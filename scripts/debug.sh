@@ -1,0 +1,6 @@
+echo "User: $(whoami)"
+echo "Shell: $SHELL"
+echo "Find version:"
+find --version || echo "find has no --version (probably busybox)"
+echo "Files:"
+ls -l "$IMG_DIR"

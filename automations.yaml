@@ -1,0 +1,158 @@
+- id: '1744692868415'
+  alias: Set Laundry Light Based on Flick Pricing
+  description: ''
+  triggers:
+  - entity_id: sensor.flick_pricing_period
+    trigger: state
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: sensor.flick_pricing_period
+        state: Peak
+      sequence:
+      - target:
+          entity_id: light.laundry_ceiling_1
+        data:
+          rgb_color:
+          - 255
+          - 64
+          - 64
+          brightness_pct: 75
+        action: light.turn_on
+    - conditions:
+      - condition: state
+        entity_id: sensor.flick_pricing_period
+        state: Shoulder
+      sequence:
+      - target:
+          entity_id: light.laundry_ceiling_1
+        data:
+          rgb_color:
+          - 255
+          - 165
+          - 0
+          brightness_pct: 75
+        action: light.turn_on
+    - conditions:
+      - condition: state
+        entity_id: sensor.flick_pricing_period
+        state: Off-Peak
+      sequence:
+      - target:
+          entity_id: light.laundry_ceiling_1
+        data:
+          rgb_color:
+          - 0
+          - 200
+          - 83
+          brightness_pct: 75
+        action: light.turn_on
+  mode: single
+- id: '1746146866850'
+  alias: 'Sensor Light - Office '
+  description: ''
+  use_blueprint:
+    path: Blackshome/sensor-light.yaml
+    input:
+      motion_trigger:
+      - binary_sensor.office_motion
+      light_switch:
+        entity_id:
+        - light.office_ceiling_1_2
+        - light.office_ceiling_2
+        - light.office_ceiling_3_3
+      include_dynamic_lighting: disable_dynamic_lighting
+      include_ambient: ambient_enabled
+      ambient_light_sensor: sensor.office_motion_illuminance
+      ambient_light_options: ambient_light_option_enabled
+      include_light_control:
+      - use_brightness
+      - use_transition
+      include_bypass: []
+- id: '1748939674348'
+  alias: Sensor Light - Laundry
+  description: ''
+  use_blueprint:
+    path: Blackshome/sensor-light.yaml
+    input:
+      motion_trigger:
+      - binary_sensor.laundry_motion_2
+      - binary_sensor.laundry_sensor_2
+      light_switch:
+        entity_id:
+        - light.laundry_light
+        - light.laundry_hall_light
+      include_light_control:
+      - use_brightness
+      - use_transition
+      time_delay: 5
+      light_transition_on: 2
+      light_transition_off: 10
+- id: '1748940381626'
+  alias: Sensor Light - Garage
+  description: ''
+  use_blueprint:
+    path: Blackshome/sensor-light.yaml
+    input:
+      motion_trigger:
+      - binary_sensor.garage_motion_3
+      - binary_sensor.garage_door_opening
+      light_switch:
+        entity_id:
+        - light.garage_1
+        - light.garage_2
+      include_light_control:
+      - use_brightness
+      - use_transition
+      include_light_colour_control: disable_colour_control
+- id: '1748945017821'
+  alias: Living motion
+  description: ''
+  use_blueprint:
+    path: Blackshome/sensor-light.yaml
+    input:
+      motion_trigger:
+      - binary_sensor.living_room_motion_4
+      light_switch:
+        entity_id:
+        - light.livingroom_pendant
+        - light.couch_1_2
+        - light.couch_2_3
+        - light.tapo_smart_bulb
+        - light.dining_ceiling_2
+      include_dynamic_lighting: enable_sun_elevation_colour_lux_brightness
+- id: '1748946773226'
+  alias: Sensor - hall
+  description: ''
+  use_blueprint:
+    path: Blackshome/sensor-light.yaml
+    input:
+      motion_trigger:
+      - binary_sensor.hall_sensor
+      light_switch:
+        entity_id: light.spare_ceiling_2
+      time_delay: 1
+      include_light_control:
+      - use_brightness
+      - use_transition
+      light_brightness: 30
+      light_transition_on: 5
+      light_transition_off: 10
+- id: '1749069565541'
+  alias: Sensor light - boys loo
+  description: ''
+  use_blueprint:
+    path: Blackshome/sensor-light.yaml
+    input:
+      motion_trigger:
+      - binary_sensor.boys_loo_2
+      light_switch:
+        entity_id: light.boys_loo
+      include_light_control:
+      - use_brightness
+      - use_transition
+      time_delay: 5
+      light_transition_on: 2
+      light_transition_off: 2

@@ -1,0 +1,195 @@
+- id: '1748945204374'
+  name: Night Low
+  entities:
+    light.livingroom_pendant:
+      effect_list:
+      - Disco
+      - Strobe epilepsy!
+      - Alarm
+      - Police2
+      - WhatsApp
+      - Facebook
+      - Twitter
+      - Home
+      - Candle Flicker
+      - Tea Time
+      - Slow Temp
+      - Stop
+      supported_color_modes:
+      - brightness
+      effect:
+      color_mode: brightness
+      brightness: 3
+      flowing: 0
+      music_mode: false
+      friendly_name: Livingroom Pendant
+      supported_features: 44
+      state: 'on'
+    light.mezzanine_lamp:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 4504
+      min_mireds: 222
+      max_mireds: 454
+      supported_color_modes:
+      - color_temp
+      color_mode: color_temp
+      brightness: 23
+      color_temp_kelvin: 2890
+      color_temp: 346
+      hs_color:
+      - 28.016
+      - 59.968
+      rgb_color:
+      - 255
+      - 173
+      - 102
+      xy_color:
+      - 0.507
+      - 0.384
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Mezzanine Lamp
+      supported_features: 40
+      state: 'on'
+    light.couch_1_2:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 4504
+      min_mireds: 222
+      max_mireds: 454
+      supported_color_modes:
+      - color_temp
+      color_mode: color_temp
+      brightness: 3
+      color_temp_kelvin: 2915
+      color_temp: 343
+      hs_color:
+      - 27.971
+      - 59.254
+      rgb_color:
+      - 255
+      - 174
+      - 104
+      xy_color:
+      - 0.504
+      - 0.384
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Couch 1
+      supported_features: 40
+      state: 'on'
+    light.couch_2_3:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 4504
+      min_mireds: 222
+      max_mireds: 454
+      supported_color_modes:
+      - color_temp
+      color_mode: color_temp
+      brightness: 178
+      color_temp_kelvin: 2915
+      color_temp: 343
+      hs_color:
+      - 27.971
+      - 59.254
+      rgb_color:
+      - 255
+      - 174
+      - 104
+      xy_color:
+      - 0.504
+      - 0.384
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Couch 2
+      supported_features: 40
+      state: 'on'
+    light.dining_lights:
+      min_color_temp_kelvin: 2500
+      max_color_temp_kelvin: 6500
+      min_mireds: 153
+      max_mireds: 400
+      effect_list:
+      - 'Off'
+      - Party
+      - Relax
+      supported_color_modes:
+      - color_temp
+      - hs
+      effect: 'off'
+      color_mode: color_temp
+      brightness: 10
+      color_temp_kelvin: 2900
+      color_temp: 344
+      hs_color:
+      - 27.998
+      - 59.681
+      rgb_color:
+      - 255
+      - 174
+      - 103
+      xy_color:
+      - 0.505
+      - 0.385
+      entity_id:
+      - light.tapo_smart_bulb
+      - light.dining_ceiling_2
+      icon: mdi:lightbulb-group
+      friendly_name: Dining Lights
+      supported_features: 36
+      state: 'on'
+    light.stairs_1:
+      effect_list:
+      - Disco
+      - Strobe epilepsy!
+      - Alarm
+      - Police2
+      - WhatsApp
+      - Facebook
+      - Twitter
+      - Home
+      - Candle Flicker
+      - Tea Time
+      - Slow Temp
+      - Stop
+      supported_color_modes:
+      - brightness
+      effect:
+      color_mode: brightness
+      brightness: 128
+      flowing: false
+      music_mode: false
+      night_light: false
+      friendly_name: Stairs 1
+      supported_features: 44
+      state: 'on'
+    light.stair_2:
+      restored: true
+      effect_list:
+      - Disco
+      - Strobe epilepsy!
+      - Alarm
+      - Police2
+      - WhatsApp
+      - Facebook
+      - Twitter
+      - Home
+      - Candle Flicker
+      - Tea Time
+      - Slow Temp
+      - Stop
+      supported_color_modes:
+      - brightness
+      supported_features: 44
+      state: unavailable
+  icon: mdi:weather-night
+  metadata:
+    light.couch_1_2:
+      entity_only: true
+    light.couch_2_3:
+      entity_only: true
+    light.dining_lights:
+      entity_only: true
+    light.stairs_1:
+      entity_only: true
+    light.stair_2:
+      entity_only: true

@@ -1,0 +1,54 @@
+# ---------------------------------------------------------
+# Home Assistant .gitignore
+# ---------------------------------------------------------
+
+# Core runtime & internal state (never commit these)
+.storage/
+home-assistant_v2.db
+home-assistant_v2.db-shm
+home-assistant_v2.db-wal
+
+# Log files
+*.log
+*.log.*
+*.db
+*.sqlite
+
+# Credentials & secrets
+secrets.yaml
+*.pem
+*.crt
+*.key
+*.der
+
+# Backup folders and snapshots
+backup/
+backups/
+*.tar
+*.zip
+
+# Compiled / temporary files
+*.pyc
+__pycache__/
+
+# Add-ons and Supervisor cache
+share/
+addons/
+ssl/
+tmp/
+tts/
+www/community/.storage
+www/community/*-cache*/
+
+# UI local dashboards storage
+.cloud/
+
+# No hacs components
+custom_components
+
+
+# VSCode / Editor / OS artifacts
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

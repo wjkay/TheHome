@@ -1,0 +1,47 @@
+esphome:
+  name: kitchen-led
+  friendly_name: Kitchen Led
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "w6m4orsSBKN6rqbwWT+dDcRdVEDivuRe7Wp5E+t83AE="
+
+ota:
+  - platform: esphome
+    password: "7688b15ddfe118dfa26e0dfcfb0dd1b8"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Kitchen-Led Fallback Hotspot"
+    password: "FCcOP7kZBGS2"
+
+captive_portal:
+    
+# --- PWM output ---
+output:
+  - platform: ledc
+    id: pwm_led_out
+    pin: GPIO21       # D2 on NodeMCU-style ESP32
+    frequency: 19531Hz
+
+# --- Light entity ---
+light:
+  - platform: monochromatic
+    name: "Kitchen LED"
+    output: pwm_led_out
+    gamma_correct: 1.8
+    default_transition_length: 300ms
+    restore_mode: RESTORE_DEFAULT_OFF

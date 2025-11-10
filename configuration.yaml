@@ -1,0 +1,86 @@
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 127.0.0.1
+    - 192.168.0.203
+
+# Loads default set of integrations. Do not remove.
+# default_config:
+
+zha:
+  custom_quirks_path: /config/zhaquirks
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+# Flick energy pricing.
+template:
+  - sensor:
+      - name: "Flick Pricing Period"
+        unique_id: flick_pricing_period
+        state: >
+          {% set hour = now().hour %}
+          {% if 23 <= hour or hour < 7 %}
+            Off-Peak
+          {% elif 7 <= hour < 17 or 21 <= hour < 23 %}
+            Shoulder
+          {% else %}
+            Peak
+          {% endif %}
+        icon: >
+          {% set state = states('sensor.flick_pricing_period') %}
+          {% if state == 'Off-Peak' %}
+            mdi:weather-night
+          {% elif state == 'Shoulder' %}
+            mdi:weather-cloudy
+          {% else %}
+            mdi:weather-lightning
+          {% endif %}
+
+cover:
+  - platform: template
+    covers:
+      garage_door:
+        friendly_name: "Garage Door"
+        unique_id: cover_garage_door
+        device_class: garage
+        value_template: >
+          {% if is_state('binary_sensor.garage_door_opening', 'on') %}
+            open
+          {% else %}
+            closed
+          {% endif %}
+        open_cover:
+          service: light.turn_on
+          data:
+            entity_id: light.garage_door
+        close_cover:
+          service: light.turn_off
+          data:
+            entity_id: light.garage_door
+        stop_cover:
+          service: light.toggle
+          data:
+            entity_id: light.garage_door
+
+rest_command:
+  whisper_tts:
+    url: "http://192.168.0.225:5000/generate_speech"
+    method: POST
+    headers:
+      Content-Type: application/json
+    payload: '{"message": "{{ message }}"}'
+
+input_select:
+  traffic_cam_timeline:
+    name: Traffic Cam Timeline
+    options:
+      - 15min
+      - 1hr
+      - 4hr
+    initial: 15min
+    icon: mdi:clock
