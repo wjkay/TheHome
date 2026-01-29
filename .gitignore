@@ -55,3 +55,6 @@ custom_components
 Thumbs.db
 zigbee.db-wal
 zigbee.db-shm
+.claude/ha-token
+.claude/home-index.json
+.claude/home-index.previous.json
