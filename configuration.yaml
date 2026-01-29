@@ -6,6 +6,7 @@ http:
 
 # Loads default set of integrations. Do not remove.
 # default_config:
+api:
 
 zha:
   custom_quirks_path: /config/zhaquirks
@@ -84,3 +85,7 @@ input_select:
       - 4hr
     initial: 15min
     icon: mdi:clock
+
+homeassistant:
+  allowlist_external_dirs:
+    - "/

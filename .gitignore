@@ -47,8 +47,11 @@ www/community/*-cache*/
 custom_components
 
 
+
 # VSCode / Editor / OS artifacts
 .vscode/
 .idea/
 .DS_Store
 Thumbs.db
+zigbee.db-wal
+zigbee.db-shm

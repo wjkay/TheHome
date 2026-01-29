@@ -103,6 +103,7 @@
         entity_id:
         - light.garage_1
         - light.garage_2
+        - switch.garage_fluro
       include_light_control:
       - use_brightness
       - use_transition
@@ -132,14 +133,15 @@
       motion_trigger:
       - binary_sensor.hall_sensor
       light_switch:
-        entity_id: light.spare_ceiling_2
+        entity_id: light.bathroom_2
       time_delay: 1
       include_light_control:
       - use_brightness
       - use_transition
-      light_brightness: 30
+      light_brightness: 32
       light_transition_on: 5
       light_transition_off: 10
+      include_light_colour_control: disable_colour_control
 - id: '1749069565541'
   alias: Sensor light - boys loo
   description: ''
@@ -156,3 +158,20 @@
       time_delay: 5
       light_transition_on: 2
       light_transition_off: 2
+- id: '1765521912306'
+  alias: 'Toggle Lucas '
+  description: ''
+  triggers:
+  - type: changed_states
+    device_id: cd11261502cb2060a8ecb16f92a2c340
+    entity_id: cd6175de9710f35215690fa9561bc175
+    domain: switch
+    trigger: device
+  conditions: []
+  actions:
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.bedside_1_2
+  mode: single
