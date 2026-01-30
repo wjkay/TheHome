@@ -91,6 +91,6 @@ input_boolean:
     name: EV Charge Override
     icon: mdi:car-electric
 
-homeassistant:
-  allowlist_external_dirs:
-    - "/config/www/traffic_cams"
+# homeassistant:
+#   allowlist_external_dirs:
+#     - "/config/www/traffic_cams"  # Uncomment when directory exists
