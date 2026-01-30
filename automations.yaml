@@ -175,3 +175,133 @@
     target:
       entity_id: light.bedside_1_2
   mode: single
+
+- id: '1769714000001'
+  alias: EV Charging - Start Off-Peak
+  description: Start EV charging when Off-Peak pricing begins
+  triggers:
+  - entity_id: sensor.flick_pricing_period
+    to: Off-Peak
+    trigger: state
+  conditions:
+  - condition: numeric_state
+    entity_id: sensor.mg_mg4_state_of_charge
+    below: 90
+  - condition: state
+    entity_id: device_tracker.mg_mg4_gps_location
+    state: home
+  actions:
+  - action: switch.turn_on
+    target:
+      entity_id: switch.car_charger
+  - action: notify.mobile_app_sm_s928b
+    data:
+      title: "EV Charging Started"
+      message: "Off-Peak pricing active. Battery at {{ states('sensor.mg_mg4_state_of_charge') }}%"
+  mode: single
+
+- id: '1769714000002'
+  alias: EV Charging - Stop Off-Peak End
+  description: Stop EV charging when Off-Peak pricing ends (unless override)
+  triggers:
+  - entity_id: sensor.flick_pricing_period
+    from: Off-Peak
+    trigger: state
+  conditions:
+  - condition: state
+    entity_id: input_boolean.ev_charge_override
+    state: 'off'
+  - condition: state
+    entity_id: switch.car_charger
+    state: 'on'
+  actions:
+  - action: switch.turn_off
+    target:
+      entity_id: switch.car_charger
+  - action: notify.mobile_app_sm_s928b
+    data:
+      title: "EV Charging Paused"
+      message: "Off-Peak ended. Battery at {{ states('sensor.mg_mg4_state_of_charge') }}%. Toggle override to continue."
+  mode: single
+
+- id: '1769714000003'
+  alias: EV Charging - Complete Notification
+  description: Notify when EV reaches target charge
+  triggers:
+  - entity_id: sensor.mg_mg4_state_of_charge
+    above: 89
+    trigger: numeric_state
+  conditions:
+  - condition: state
+    entity_id: switch.car_charger
+    state: 'on'
+  actions:
+  - action: notify.mobile_app_sm_s928b
+    data:
+      title: "EV Charging Complete"
+      message: "Battery at {{ states('sensor.mg_mg4_state_of_charge') }}%. Charger will turn off."
+  - delay:
+      minutes: 5
+  - action: switch.turn_off
+    target:
+      entity_id: switch.car_charger
+  mode: single
+
+- id: '1769714000004'
+  alias: Sensor Light - Workshop
+  description: Motion-activated workshop light
+  use_blueprint:
+    path: Blackshome/sensor-light.yaml
+    input:
+      motion_trigger:
+      - binary_sensor.workshop_sensor
+      light_switch:
+        entity_id:
+        - light.workshop_1
+      include_light_control:
+      - use_brightness
+      - use_transition
+      time_delay: 10
+      light_transition_on: 1
+      light_transition_off: 5
+      include_light_colour_control: disable_colour_control
+
+- id: '1769714000005'
+  alias: Sensor Light - Mezzanine
+  description: Motion-activated mezzanine lamp
+  use_blueprint:
+    path: Blackshome/sensor-light.yaml
+    input:
+      motion_trigger:
+      - binary_sensor.mezzanine_motion_5
+      light_switch:
+        entity_id:
+        - light.mezzanine_lamp
+      include_light_control:
+      - use_brightness
+      - use_transition
+      time_delay: 15
+      light_brightness: 50
+      light_transition_on: 3
+      light_transition_off: 10
+
+- id: '1769714000006'
+  alias: Sensor Light - Stairs
+  description: Motion-activated stair lights using hall sensors
+  use_blueprint:
+    path: Blackshome/sensor-light.yaml
+    input:
+      motion_trigger:
+      - binary_sensor.hall_sensor
+      - binary_sensor.hall_cupboard
+      light_switch:
+        entity_id:
+        - light.stairs_1
+        - light.stair_2
+      include_light_control:
+      - use_brightness
+      - use_transition
+      time_delay: 3
+      light_brightness: 40
+      light_transition_on: 2
+      light_transition_off: 5

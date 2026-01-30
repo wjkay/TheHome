@@ -86,6 +86,11 @@ input_select:
     initial: 15min
     icon: mdi:clock
 
+input_boolean:
+  ev_charge_override:
+    name: EV Charge Override
+    icon: mdi:car-electric
+
 homeassistant:
   allowlist_external_dirs:
-    - "/
+    - "/homeassistant/www/traffic_cams"
