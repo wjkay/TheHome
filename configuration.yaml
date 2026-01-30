@@ -93,4 +93,4 @@ input_boolean:
 
 homeassistant:
   allowlist_external_dirs:
-    - "/homeassistant/www/traffic_cams"
+    - "/config/www/traffic_cams"
