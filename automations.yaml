@@ -1,15 +1,15 @@
 - id: '1744692868415'
-  alias: Set Laundry Light Based on Flick Pricing
-  description: ''
+  alias: Set Laundry Light Based on Toast Pricing
+  description: 'Toast fixed night rate: 9pm-7am Off-Peak, 7am-9pm Peak'
   triggers:
-  - entity_id: sensor.flick_pricing_period
+  - entity_id: sensor.toast_pricing_period
     trigger: state
   conditions: []
   actions:
   - choose:
     - conditions:
       - condition: state
-        entity_id: sensor.flick_pricing_period
+        entity_id: sensor.toast_pricing_period
         state: Peak
       sequence:
       - target:
@@ -23,21 +23,7 @@
         action: light.turn_on
     - conditions:
       - condition: state
-        entity_id: sensor.flick_pricing_period
-        state: Shoulder
-      sequence:
-      - target:
-          entity_id: light.laundry_ceiling_1
-        data:
-          rgb_color:
-          - 255
-          - 165
-          - 0
-          brightness_pct: 75
-        action: light.turn_on
-    - conditions:
-      - condition: state
-        entity_id: sensor.flick_pricing_period
+        entity_id: sensor.toast_pricing_period
         state: Off-Peak
       sequence:
       - target:
@@ -178,9 +164,9 @@
 
 - id: '1769714000001'
   alias: EV Charging - Start Off-Peak
-  description: Start EV charging when Off-Peak pricing begins
+  description: Start EV charging when Toast night rate begins (9pm)
   triggers:
-  - entity_id: sensor.flick_pricing_period
+  - entity_id: sensor.toast_pricing_period
     to: Off-Peak
     trigger: state
   conditions:
@@ -197,14 +183,14 @@
   - action: notify.mobile_app_sm_s928b
     data:
       title: "EV Charging Started"
-      message: "Off-Peak pricing active. Battery at {{ states('sensor.mg_mg4_state_of_charge') }}%"
+      message: "Toast night rate active (9pm-7am). Battery at {{ states('sensor.mg_mg4_state_of_charge') }}%"
   mode: single
 
 - id: '1769714000002'
   alias: EV Charging - Stop Off-Peak End
-  description: Stop EV charging when Off-Peak pricing ends (unless override)
+  description: Stop EV charging when Toast night rate ends at 7am (unless override)
   triggers:
-  - entity_id: sensor.flick_pricing_period
+  - entity_id: sensor.toast_pricing_period
     from: Off-Peak
     trigger: state
   conditions:
@@ -221,7 +207,7 @@
   - action: notify.mobile_app_sm_s928b
     data:
       title: "EV Charging Paused"
-      message: "Off-Peak ended. Battery at {{ states('sensor.mg_mg4_state_of_charge') }}%. Toggle override to continue."
+      message: "Toast night rate ended (7am). Battery at {{ states('sensor.mg_mg4_state_of_charge') }}%. Toggle override to continue."
   mode: single
 
 - id: '1769714000003'

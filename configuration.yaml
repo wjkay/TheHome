@@ -18,28 +18,23 @@ automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
 
-# Flick energy pricing.
+# Toast energy pricing - fixed night rate 9pm to 7am
 template:
   - sensor:
-      - name: "Flick Pricing Period"
-        unique_id: flick_pricing_period
+      - name: "Toast Pricing Period"
+        unique_id: toast_pricing_period
         state: >
           {% set hour = now().hour %}
-          {% if 23 <= hour or hour < 7 %}
+          {% if 21 <= hour or hour < 7 %}
             Off-Peak
-          {% elif 7 <= hour < 17 or 21 <= hour < 23 %}
-            Shoulder
           {% else %}
             Peak
           {% endif %}
         icon: >
-          {% set state = states('sensor.flick_pricing_period') %}
-          {% if state == 'Off-Peak' %}
+          {% if 21 <= now().hour or now().hour < 7 %}
             mdi:weather-night
-          {% elif state == 'Shoulder' %}
-            mdi:weather-cloudy
           {% else %}
-            mdi:weather-lightning
+            mdi:weather-sunny
           {% endif %}
 
 cover:
