@@ -107,7 +107,7 @@ notify:
     platform: group
     services:
       - service: mobile_app_sm_s928b  # Will - S24 Ultra
-      - service: mobile_app_sm_s931b  # Kelsey - S25 Ultra
+      - service: mobile_app_sm_s931b  # Kelsey - S25
 
 # homeassistant:
 #   allowlist_external_dirs:
