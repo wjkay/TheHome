@@ -163,13 +163,95 @@
   mode: single
 
 - id: '1769714000001'
-  alias: EV Charging - Start Off-Peak
-  description: Start EV charging when Toast night rate begins (9pm)
+  alias: EV Charging - 9pm Check
+  description: At 9pm, remind to plug in if low battery, or start charging if plugged in
   triggers:
-  - entity_id: sensor.toast_pricing_period
-    to: Off-Peak
+  - trigger: time
+    at: "21:00:00"
+  conditions:
+  - condition: state
+    entity_id: device_tracker.mg_mg4_gps_location
+    state: home
+  actions:
+  - choose:
+    # Low battery and NOT plugged in - send reminder
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.mg_mg4_state_of_charge
+        below: 50
+      - condition: state
+        entity_id: binary_sensor.mg_mg4_charging_gun_state
+        state: 'off'
+      sequence:
+      - action: notify.mobile_app_sm_s928b
+        data:
+          title: "Plug in the MG!"
+          message: "Battery at {{ states('sensor.mg_mg4_state_of_charge') }}% - night rate starts now (9pm-7am)"
+    # Plugged in and needs charge - start charging sequence
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.mg_mg4_state_of_charge
+        below: 90
+      - condition: state
+        entity_id: binary_sensor.mg_mg4_charging_gun_state
+        state: 'on'
+      sequence:
+      # Record starting SOC
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.ev_charge_start_soc
+        data:
+          value: "{{ states('sensor.mg_mg4_state_of_charge') | float }}"
+      - action: switch.turn_on
+        target:
+          entity_id: switch.car_charger
+      - delay:
+          seconds: 30
+      - action: switch.turn_on
+        target:
+          entity_id: switch.mg_mg4_charging
+      - action: notify.mobile_app_sm_s928b
+        data:
+          title: "EV Charging Started"
+          message: "Night rate active. Battery at {{ states('sensor.mg_mg4_state_of_charge') }}%"
+      # Wait and verify charging started
+      - delay:
+          seconds: 60
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: sensor.mg_mg4_charging_status
+            state: 'Idle'
+          sequence:
+          # Retry turning on charging
+          - action: switch.turn_on
+            target:
+              entity_id: switch.mg_mg4_charging
+          - delay:
+              seconds: 30
+          - choose:
+            - conditions:
+              - condition: state
+                entity_id: sensor.mg_mg4_charging_status
+                state: 'Idle'
+              sequence:
+              - action: notify.mobile_app_sm_s928b
+                data:
+                  title: "EV Charging Failed"
+                  message: "Charger on but MG not responding. Check app manually."
+  mode: single
+
+- id: '1769714000002'
+  alias: EV Charging - Plugged In After 9pm
+  description: Start charging if plugged in during night rate (after reminder)
+  triggers:
+  - entity_id: binary_sensor.mg_mg4_charging_gun_state
+    to: 'on'
     trigger: state
   conditions:
+  - condition: state
+    entity_id: sensor.toast_pricing_period
+    state: 'Off-Peak'
   - condition: numeric_state
     entity_id: sensor.mg_mg4_state_of_charge
     below: 90
@@ -177,63 +259,123 @@
     entity_id: device_tracker.mg_mg4_gps_location
     state: home
   actions:
+  # Record starting SOC
+  - action: input_number.set_value
+    target:
+      entity_id: input_number.ev_charge_start_soc
+    data:
+      value: "{{ states('sensor.mg_mg4_state_of_charge') | float }}"
   - action: switch.turn_on
     target:
       entity_id: switch.car_charger
+  - delay:
+      seconds: 30
+  - action: switch.turn_on
+    target:
+      entity_id: switch.mg_mg4_charging
   - action: notify.mobile_app_sm_s928b
     data:
       title: "EV Charging Started"
-      message: "Toast night rate active (9pm-7am). Battery at {{ states('sensor.mg_mg4_state_of_charge') }}%"
+      message: "Plugged in during night rate. Battery at {{ states('sensor.mg_mg4_state_of_charge') }}%"
+  - delay:
+      seconds: 60
+  - condition: state
+    entity_id: sensor.mg_mg4_charging_status
+    state: 'Idle'
+  - action: switch.turn_on
+    target:
+      entity_id: switch.mg_mg4_charging
   mode: single
 
-- id: '1769714000002'
-  alias: EV Charging - Stop Off-Peak End
+- id: '1769714000003'
+  alias: EV Charging - Stop at 7am
   description: Stop EV charging when Toast night rate ends at 7am (unless override)
   triggers:
-  - entity_id: sensor.toast_pricing_period
-    from: Off-Peak
-    trigger: state
+  - trigger: time
+    at: "07:00:00"
   conditions:
   - condition: state
     entity_id: input_boolean.ev_charge_override
     state: 'off'
-  - condition: state
-    entity_id: switch.car_charger
-    state: 'on'
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: switch.car_charger
+      state: 'on'
+    - condition: state
+      entity_id: switch.mg_mg4_charging
+      state: 'on'
   actions:
   - action: switch.turn_off
     target:
+      entity_id: switch.mg_mg4_charging
+  - delay:
+      seconds: 10
+  - action: switch.turn_off
+    target:
       entity_id: switch.car_charger
+  # Send summary with charge gained (only if > 0)
+  - variables:
+      start_soc: "{{ states('input_number.ev_charge_start_soc') | float }}"
+      end_soc: "{{ states('sensor.mg_mg4_state_of_charge') | float }}"
+      gained: "{{ (end_soc - start_soc) | round(1) }}"
+  - condition: template
+    value_template: "{{ gained > 0 }}"
   - action: notify.mobile_app_sm_s928b
     data:
-      title: "EV Charging Paused"
-      message: "Toast night rate ended (7am). Battery at {{ states('sensor.mg_mg4_state_of_charge') }}%. Toggle override to continue."
+      title: "EV Charging Summary"
+      message: "Night rate ended. Battery {{ start_soc | round(0) }}% → {{ end_soc | round(0) }}% (+{{ gained }}%)"
   mode: single
 
-- id: '1769714000003'
-  alias: EV Charging - Complete Notification
-  description: Notify when EV reaches target charge
+- id: '1769714000004'
+  alias: EV Charging - Complete
+  description: Notify and stop when EV reaches target charge
   triggers:
   - entity_id: sensor.mg_mg4_state_of_charge
     above: 89
     trigger: numeric_state
   conditions:
-  - condition: state
-    entity_id: switch.car_charger
-    state: 'on'
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: switch.car_charger
+      state: 'on'
+    - condition: state
+      entity_id: switch.mg_mg4_charging
+      state: 'on'
   actions:
-  - action: notify.mobile_app_sm_s928b
-    data:
-      title: "EV Charging Complete"
-      message: "Battery at {{ states('sensor.mg_mg4_state_of_charge') }}%. Charger will turn off."
+  - variables:
+      start_soc: "{{ states('input_number.ev_charge_start_soc') | float }}"
+      end_soc: "{{ states('sensor.mg_mg4_state_of_charge') | float }}"
+      gained: "{{ (end_soc - start_soc) | round(1) }}"
+  # Send summary with charge gained (only if > 0)
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: "{{ gained > 0 }}"
+      sequence:
+      - action: notify.mobile_app_sm_s928b
+        data:
+          title: "EV Charging Complete"
+          message: "Battery {{ start_soc | round(0) }}% → {{ end_soc | round(0) }}% (+{{ gained }}%)"
+    default:
+    - action: notify.mobile_app_sm_s928b
+      data:
+        title: "EV Charging Complete"
+        message: "Battery at {{ end_soc | round(0) }}%"
   - delay:
-      minutes: 5
+      minutes: 2
+  - action: switch.turn_off
+    target:
+      entity_id: switch.mg_mg4_charging
+  - delay:
+      seconds: 10
   - action: switch.turn_off
     target:
       entity_id: switch.car_charger
   mode: single
 
-- id: '1769714000004'
+- id: '1769714000005'
   alias: Sensor Light - Workshop
   description: Motion-activated workshop light
   use_blueprint:
@@ -252,7 +394,7 @@
       light_transition_off: 5
       include_light_colour_control: disable_colour_control
 
-- id: '1769714000005'
+- id: '1769714000006'
   alias: Sensor Light - Mezzanine
   description: Motion-activated mezzanine lamp
   use_blueprint:
@@ -271,7 +413,7 @@
       light_transition_on: 3
       light_transition_off: 10
 
-- id: '1769714000006'
+- id: '1769714000007'
   alias: Sensor Light - Stairs
   description: Motion-activated stair lights using hall sensors
   use_blueprint:

@@ -86,6 +86,15 @@ input_boolean:
     name: EV Charge Override
     icon: mdi:car-electric
 
+input_number:
+  ev_charge_start_soc:
+    name: EV Charge Start SOC
+    min: 0
+    max: 100
+    step: 0.1
+    unit_of_measurement: "%"
+    icon: mdi:battery-charging
+
 # homeassistant:
 #   allowlist_external_dirs:
 #     - "/config/www/traffic_cams"  # Uncomment when directory exists
