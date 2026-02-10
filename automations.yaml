@@ -570,3 +570,20 @@
       title: "Clothes Still Waiting!"
       message: "Washing finished 30 mins ago - dryer hasn't started"
   mode: restart
+
+- id: '1769714000015'
+  alias: Plant Watering Reminder
+  description: Daily reminder at 7:30am if soil moisture below 45%
+  triggers:
+  - trigger: time
+    at: "07:30:00"
+  conditions:
+  - condition: numeric_state
+    entity_id: sensor.plant_moisture_meter_soil_moisture
+    below: 45
+  actions:
+  - action: notify.everyone
+    data:
+      title: "Water the Plants!"
+      message: "Soil moisture at {{ states('sensor.plant_moisture_meter_soil_moisture') }}%"
+  mode: single
