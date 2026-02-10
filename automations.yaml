@@ -437,4 +437,21 @@
   - action: light.turn_off
     target:
       entity_id: all
+  - action: switch.turn_off
+    target:
+      entity_id: switch.garden_lights
+  mode: single
+
+- id: '1769714000009'
+  alias: Garden Lights On at Sunset
+  description: Turn on garden lights 30 mins before sunset
+  triggers:
+  - trigger: sun
+    event: sunset
+    offset: "-00:30:00"
+  conditions: []
+  actions:
+  - action: switch.turn_on
+    target:
+      entity_id: switch.garden_lights
   mode: single
