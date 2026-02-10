@@ -185,8 +185,8 @@
       sequence:
       - action: notify.mobile_app_sm_s928b
         data:
-          title: "Plug in the MG!"
-          message: "Battery at {{ states('sensor.mg_mg4_state_of_charge') }}% - night rate starts now (9pm-7am)"
+          title: "Night Rate Started!"
+          message: "Plug in the MG ({{ states('sensor.mg_mg4_state_of_charge') | round(0) }}%) and put on any washing - cheap power until 7am"
     # Plugged in and needs charge - start charging sequence
     - conditions:
       - condition: numeric_state
@@ -238,7 +238,7 @@
               - action: notify.mobile_app_sm_s928b
                 data:
                   title: "EV Charging Failed"
-                  message: "Charger on but MG not responding. Check app manually."
+                  message: "Charger on but MG not responding. Check app manually. Put on washing while you're at it!"
   mode: single
 
 - id: '1769714000002'
