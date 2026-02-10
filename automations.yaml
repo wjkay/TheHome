@@ -425,3 +425,16 @@
       light_brightness: 40
       light_transition_on: 2
       light_transition_off: 5
+
+- id: '1769714000008'
+  alias: Lights Off at 11pm
+  description: Turn off all lights at 11pm
+  triggers:
+  - trigger: time
+    at: "23:00:00"
+  conditions: []
+  actions:
+  - action: light.turn_off
+    target:
+      entity_id: all
+  mode: single
