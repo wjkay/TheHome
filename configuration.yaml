@@ -95,6 +95,13 @@ input_number:
     unit_of_measurement: "%"
     icon: mdi:battery-charging
 
+counter:
+  baby_wakeups:
+    name: Baby Wake-ups Tonight
+    initial: 0
+    step: 1
+    icon: mdi:baby-face-outline
+
 # homeassistant:
 #   allowlist_external_dirs:
 #     - "/config/www/traffic_cams"  # Uncomment when directory exists

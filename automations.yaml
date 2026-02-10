@@ -489,3 +489,59 @@
     target:
       entity_id: switch.garden_lights
   mode: restart
+
+- id: '1769714000011'
+  alias: Baby Wake-up Counter
+  description: Count baby wake-ups during sleep hours (10pm-6am)
+  triggers:
+  - trigger: event
+    event_type: state_changed
+    event_data:
+      entity_id: event.millie_s_room_motion
+  conditions:
+  - condition: or
+    conditions:
+    - condition: time
+      after: "22:00:00"
+    - condition: time
+      before: "06:00:00"
+  actions:
+  - action: counter.increment
+    target:
+      entity_id: counter.baby_wakeups
+  - action: notify.mobile_app_sm_s928b
+    data:
+      title: "Baby Awake"
+      message: "Wake-up #{{ states('counter.baby_wakeups') }} at {{ now().strftime('%H:%M') }}"
+  mode: single
+  max_exceeded: silent
+
+- id: '1769714000012'
+  alias: Baby Wake-up Counter Reset
+  description: Reset wake-up counter at 10pm each night
+  triggers:
+  - trigger: time
+    at: "22:00:00"
+  conditions: []
+  actions:
+  - action: counter.reset
+    target:
+      entity_id: counter.baby_wakeups
+  mode: single
+
+- id: '1769714000013'
+  alias: Baby Wake-up Morning Summary
+  description: Send summary of overnight wake-ups at 6am
+  triggers:
+  - trigger: time
+    at: "06:00:00"
+  conditions:
+  - condition: numeric_state
+    entity_id: counter.baby_wakeups
+    above: 0
+  actions:
+  - action: notify.mobile_app_sm_s928b
+    data:
+      title: "Baby Sleep Summary"
+      message: "{{ states('counter.baby_wakeups') }} wake-up(s) overnight"
+  mode: single
