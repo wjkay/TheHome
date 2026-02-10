@@ -545,3 +545,28 @@
       title: "Baby Sleep Summary"
       message: "{{ states('counter.baby_wakeups') }} wake-up(s) overnight"
   mode: single
+
+- id: '1769714000014'
+  alias: Washing Machine Done
+  description: Notify when washing finishes, remind about dryer after 30 mins
+  triggers:
+  - trigger: event
+    event_type: state_changed
+    event_data:
+      entity_id: event.washing_machine_notification
+  conditions: []
+  actions:
+  - action: notify.everyone
+    data:
+      title: "Washing Done!"
+      message: "Time to move it to the dryer"
+  - delay:
+      minutes: 30
+  - condition: state
+    entity_id: sensor.dryer_current_status
+    state: 'power_off'
+  - action: notify.everyone
+    data:
+      title: "Clothes Still Waiting!"
+      message: "Washing finished 30 mins ago - dryer hasn't started"
+  mode: restart

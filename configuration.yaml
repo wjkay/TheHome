@@ -102,6 +102,13 @@ counter:
     step: 1
     icon: mdi:baby-face-outline
 
+notify:
+  - name: everyone
+    platform: group
+    services:
+      - service: mobile_app_sm_s928b  # Will - S24 Ultra
+      - service: mobile_app_sm_s931b  # Kelsey - S25 Ultra
+
 # homeassistant:
 #   allowlist_external_dirs:
 #     - "/config/www/traffic_cams"  # Uncomment when directory exists
