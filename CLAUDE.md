@@ -74,6 +74,12 @@ No traditional test suite. Validation is done through:
 ### Custom Device Support
 - `zhaquirks/ts0601_garage.py`: Python quirk for Tuya garage door opener - maps data points to Home Assistant entities and handles vendor-specific protocol
 
+## Git & GitHub
+
+- **Remote is HTTPS**: `https://github.com/wjkay/TheHome.git` — DO NOT change to SSH
+- **Auth**: `gh` CLI is the credential helper. If `git push` fails, just run `gh auth login` — do not change the remote URL, do not switch protocols, do not modify `~/.config/gh/hosts.yml`
+- **Never change git remote URLs** without explicit user instruction
+
 ## Important Notes
 
 - **No build step**: YAML configuration is interpreted at runtime by Home Assistant
