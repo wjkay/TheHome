@@ -436,7 +436,38 @@
   actions:
   - action: light.turn_off
     target:
-      entity_id: all
+      entity_id:
+      - light.livingroom_pendant
+      - light.couch_1_2
+      - light.couch_2_3
+      - light.tapo_smart_bulb
+      - light.dining_ceiling_2
+      - light.kitchen_leds_kitchen_led
+      - light.laundry_light
+      - light.laundry_hall_light
+      - light.office_ceiling_1_2
+      - light.office_ceiling_2
+      - light.office_ceiling_3_3
+      - light.office_spotlight_1
+      - light.office_spotlight_2
+      - light.master_ceiling_light
+      - light.master_pendant
+      - light.bedside_1_2
+      - light.bedside_2
+      - light.spare_ceiling_2
+      - light.mezzanine_lamp
+      - light.bathroom_1
+      - light.bathroom_2
+      - light.bathroom_3
+      - light.boys_loo
+      - light.stairs_1
+      - light.stair_2
+      - light.garage_1
+      - light.garage_2
+      - light.workshop_1
+      - light.sunroom_ceiling_1
+      - light.sunroom_ceiling_2
+      - light.philips_lta001
   - action: switch.turn_off
     target:
       entity_id: switch.garden_lights
